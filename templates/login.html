@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ config.app_name }}</title>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css', v=asset_version) }}"
+  >
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <div class="login-logo">CD</div>
+    <p class="eyebrow">Sistemas distribuidos</p>
+    <h1>{{ config.app_name }}</h1>
+    <p class="login-welcome">{{ config.welcome }}</p>
+
+    {% if error %}
+      <div class="login-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" class="login-form">
+      <label for="username">Tu nombre</label>
+      <input
+        id="username"
+        name="username"
+        maxlength="30"
+        autocomplete="name"
+        placeholder="Ejemplo: Hanna"
+        autofocus
+        required
+      >
+      <button type="submit">Entrar al chat</button>
+    </form>
+  </main>
+</body>
+</html>

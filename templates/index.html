@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat Distribuido je</title>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css', v=asset_version) }}"
+  >
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">CD</div>
+        <div>
+          <h1 id="app-name">Chat Distribuido</h1>
+          <p id="welcome-text">Red local</p>
+        </div>
+      </div>
+
+      <div class="connection online">Conectado al servidor central</div>
+
+      <section class="sidebar-section">
+        <div class="section-title">
+          <span>Salas</span>
+          <small id="room-count">0 canales</small>
+        </div>
+        <nav id="rooms" class="rooms"></nav>
+        <button id="leave-room" class="leave-button" type="button" hidden>
+          Salir a General
+        </button>
+      </section>
+
+      <section class="sidebar-section members-section">
+        <div class="section-title">
+          <span>Usuarios conectados</span>
+          <small id="online-count">0</small>
+        </div>
+        <ul id="users" class="users"></ul>
+      </section>
+
+      <div class="profile">
+        <div id="profile-avatar" class="avatar">?</div>
+        <div class="profile-data">
+          <strong id="profile-name">Cargando...</strong>
+          <span>En línea</span>
+        </div>
+        <form method="post" action="/logout">
+          <button class="logout-button" type="submit">Salir</button>
+        </form>
+      </div>
+    </aside>
+
+    <section class="chat">
+      <header class="chat-header">
+        <div>
+          <span class="hash">#</span>
+          <h2 id="room-title">General</h2>
+        </div>
+        <p id="room-description">Canal para todos los usuarios.</p>
+      </header>
+
+      <div id="messages" class="messages">
+        <div class="empty-state">
+          <div class="empty-icon">#</div>
+          <h3>Cargando conversación</h3>
+          <p>Espera un momento.</p>
+        </div>
+      </div>
+
+      <form id="chat-form" class="composer">
+        <input
+          id="message"
+          maxlength="500"
+          autocomplete="off"
+          placeholder="Escribe un mensaje..."
+          required
+        >
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
+
+  <script
+    src="{{ url_for('static', filename='app.js', v=asset_version) }}"
+  ></script>
+</body>
+</html>

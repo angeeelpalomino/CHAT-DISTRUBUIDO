@@ -1,0 +1,19 @@
+{
+  "app_name": "Chat Distribuido",
+  "welcome": "Bienvenidos a Sistemas Distribuidos",
+  "max_message_length": 500,
+  "rooms": [
+    {"id": "general", "name": "General"},
+    {"id": "sala-1", "name": "Sala 1"},
+    {"id": "sala-2", "name": "Sala 2"},
+    {"id": "sala-3", "name": "Sala 3"}
+  ],
+  "theme": {
+    "accent": "#ff3b81",
+    "background": "#17151c",
+    "sidebar": "#211d29",
+    "panel": "#302a3a",
+    "text": "#ffffff",
+    "muted": "#c4b8cc"
+  }
+}
