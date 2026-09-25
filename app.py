@@ -3,6 +3,7 @@ import os
 import threading
 import time
 import uuid
+import psycopg
 from datetime import datetime
 from pathlib import Path
 
@@ -13,6 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = BASE_DIR / "config.json"
 ONLINE_TIMEOUT = 15
 MAX_HISTORY = 200
+
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    "postgresql://chatuser:chat123@127.0.0.1:5432/chatdb",
+)
 
 DEFAULT_CONFIG = {
     "app_name": "Chat Distribuido",
@@ -64,6 +70,84 @@ config_mtime = None
 
 def now_text():
     return datetime.now().strftime("%H:%M:%S")
+
+
+def get_db():
+    return psycopg.connect(DATABASE_URL)
+
+
+def init_db():
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS messages (
+                    id VARCHAR(32) PRIMARY KEY,
+                    type VARCHAR(20) NOT NULL,
+                    username VARCHAR(30),
+                    message TEXT NOT NULL,
+                    room VARCHAR(100) NOT NULL,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+
+    print("[DB] Base de datos lista")
+
+
+def save_message(packet):
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO messages
+                    (id, type, username, message, room)
+                VALUES
+                    (%s, %s, %s, %s, %s)
+                """,
+                (
+                    packet["id"],
+                    packet["type"],
+                    packet.get("user"),
+                    packet["message"],
+                    packet["room"],
+                ),
+            )
+
+
+def load_messages(room_id, limit=200):
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    id,
+                    type,
+                    username,
+                    message,
+                    room,
+                    created_at
+                FROM messages
+                WHERE room = %s
+                ORDER BY created_at DESC
+                LIMIT %s
+                """,
+                (room_id, limit),
+            )
+
+            rows = cur.fetchall()
+
+    history = []
+
+    for row in reversed(rows):
+        history.append({
+            "id": row[0],
+            "type": row[1],
+            "user": row[2],
+            "message": row[3],
+            "room": row[4],
+            "time": row[5].strftime("%H:%M:%S"),
+        })
+
+    return history
 
 
 def slugify_room(value):
